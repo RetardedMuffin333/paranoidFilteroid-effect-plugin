@@ -51,11 +51,12 @@ cmake --build . --config Debug --parallel 4
 2. Rescan plugins (right-click plugin list → "Rescan VST3")
 3. Search: "paranoidFilteroid"
 4. Load on audio track
-5. **Verify**:
+5. **Verify** - ✅ ALL WORKING:
    - ✅ Window opens with 3 controls (Mode, Mix, Enabled)
-   - ✅ Play audio → passes through unchanged
-   - ✅ Toggle Enabled → audio mutes
-   - ✅ All controls respond
+   - ✅ Play audio → passes through to track (track NOT muted)
+   - ✅ Mix slider → scales audio output level 0-100%
+   - ✅ Toggle Enabled → audio mutes (bypass)
+   - ✅ All controls respond and save with preset
 
 ---
 
