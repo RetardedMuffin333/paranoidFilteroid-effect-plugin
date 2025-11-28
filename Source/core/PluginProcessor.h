@@ -23,13 +23,13 @@ public:
     bool acceptsMidi() const override { return false; }
     bool producesMidi() const override { return false; }
     bool isMidiEffect() const override { return false; }
-    double getTailLengthInSeconds() const override { return 0.0; }
+    double getTailLengthSeconds() const override { return 0.0; }
 
     //==========================================================================
-    int getNumPrograms() const override { return 1; }
-    int getCurrentProgram() const override { return 0; }
+    int getNumPrograms() override { return 1; }
+    int getCurrentProgram() override { return 0; }
     void setCurrentProgram(int index) override {}
-    const juce::String getProgramName(int index) const override { return "Default"; }
+    const juce::String getProgramName(int index) override { return "Default"; }
     void changeProgramName(int index, const juce::String& newName) override {}
 
     //==========================================================================

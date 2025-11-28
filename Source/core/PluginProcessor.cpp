@@ -109,7 +109,14 @@ void PluginProcessor::setStateInformation(const void* data, int sizeInBytes) {
 
     if (xmlState.get() != nullptr) {
         if (xmlState->hasTagName(apvts.state.getType())) {
-            apvts.replaceState(*xmlState);
+            auto newState = juce::ValueTree::fromXml(*xmlState);
+            apvts.replaceState(newState);
         }
     }
+}
+
+//==============================================================================
+// JUCE Plugin Entry Point
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() {
+    return new PluginProcessor();
 }
