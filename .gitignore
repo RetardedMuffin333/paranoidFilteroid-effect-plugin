@@ -1,0 +1,10 @@
+build/
+.vs/
+*.user
+CMakeUserPresets.json
+CMakePresets.json.user
+*.dll
+*.lib
+.DS_Store
+*.o
+*.a
