@@ -327,21 +327,120 @@ Input → PluginProcessor → DSPChain → [Mode selection] →
 
 ---
 
-## 🚀 Next Steps - Phase 7: DSP Implementation
+## 🎯 Phase 8: Real IIR Filter Coefficients - COMPLETE ✅
 
-**Current Milestone**: Audio passthrough working ✅
+### Telephony & Radio Voice Effects Implementation (November 28-29, 2025)
 
-**Remaining Work**:
-1. **Implement Mode-based DSP** (Telephone/Radio/Custom filters)
-2. **Add telephony filter** (narrow bandpass, ~300-3400Hz)
-3. **Add radio filter** (voice optimization)
-4. **Test in Reaper with real audio**
-5. **Release build & optimization**
-6. **Packaging & distribution**
+**Status**: ✅ **PLUGIN COMPILES WITH REAL FILTERS** - All DSP processing implemented
+
+**What Was Built**:
+
+1. **TelephonyFilter** (Source/dsp/TelephonyFilter.h) - **NOW REAL**
+   - High-pass filter: 300 Hz, Q=1.0 (removes low rumble)
+   - Low-pass filter: 3400 Hz, Q=1.0 (removes sibilance)
+   - Creates characteristic narrowband voice effect
+   - JUCE API: `makeHighPass()`, `makeLowPass()`
+
+2. **RadioFilter** (Source/dsp/RadioFilter.h) - **NOW REAL**
+   - High-pass filter: 100 Hz, Q=0.7 (gentle rumble removal)
+   - Presence peak filter: 3500 Hz, Q=2.0, +6dB gain (brightness enhancement)
+   - Creates bright, clear "radio voice" effect
+   - JUCE API: `makeHighPass()`, `makePeakFilter()`
+
+3. **Audio Processing Chain Fixed**
+   - Discovered API issue: `ProcessContextReplacing` requires `AudioBlock<float>`, not `AudioBuffer<float>`
+   - Solution: Convert buffer to AudioBlock: `juce::dsp::AudioBlock<float> audioBlock(buffer);`
+   - Both filters now correctly chain audio through IIR processing
+
+**Technical Achievement**:
+- ✅ Real-time safe DSP coefficients using JUCE 8.1.0 IIR API
+- ✅ Two distinct filter implementations producing different sonic effects
+- ✅ Proper ProcessContext wrapping for JUCE DSP compatibility
+- ✅ No allocations in audio thread (coefficients pre-computed in prepare())
+- ✅ Compiles with zero errors (4 parameter warnings are JUCE boilerplate)
+- ✅ Plugin: **23.8 MB** debug binary
+
+**Actual Audio Path Now**:
+```
+Input → PluginProcessor → DSPChain → [Mode selection] →
+  ├─ Telephone: 300Hz HP + 3400Hz LP (narrowband voice)
+  ├─ Radio: 100Hz HP + 3500Hz presence peak (bright voice)
+  └─ Custom: Both filters chained (maximum processing)
+→ Mix blending (wet/dry) → Output
+```
+
+**Filter Specifications**:
+
+**Telephone Filter (Narrowband Voice)**:
+- Frequency Response: 300 Hz - 3400 Hz passband
+- Use Case: Heavy voice compression (like old telephone lines)
+- Character: Thin, compressed, recognizable but unnatural
+- IIR Order: 4th order total (2x 2nd order stages)
+
+**Radio Filter (Bright Voice)**:
+- Frequency Response: 100 Hz rumble removal + 3500 Hz presence boost
+- Use Case: Clear, present voice enhancement
+- Character: Bright, punchy, easy-to-hear speech
+- Presence Peak: +6 dB boost at 3500 Hz for clarity
+- IIR Order: 4th order total (2x 2nd order stages)
+
+**Build & Compilation Notes**:
+- Configuration: 157.6s (JUCE helpers compilation)
+- Compilation: Successful on first attempt after API fix
+- No linker errors or PDB conflicts
+- VST3 bundle created: `build/paranoidFilteroid_artefacts/Debug/VST3/paranoidFilteroid.vst3`
+
+**Next Phase Tasks**:
+- Load plugin in Reaper DAW
+- Test each mode (Telephone/Radio/Custom):
+  - Listen to speech with different modes
+  - Verify distinct sonic differences
+  - Test real-time mode switching (no clicks/pops)
+  - Measure CPU usage (target: <15%)
+- Record results in Phase 9 section
+
+**Commits Made**:
+- `f59b915` - Phase 8: Implement real IIR filter coefficients with correct JUCE API
+
+**Build Status**: ✅ Phase 8 complete - Ready for DAW testing
 
 ---
 
-**Build Status**: ✅ **PHASE 6 COMPLETE - AUDIO WORKING**  
-**Last Updated**: November 28, 2025  
-**Next Checkpoint**: DSP implementation (Mode filters)
+## 📅 Timeline
+
+| Date | Event | Status |
+|------|-------|--------|
+| 11/28/2025 | Project initialized, code completed | ✅ Done |
+| 11/28/2025 | Documentation created | ✅ Done |
+| 11/28/2025 | Tool installation (CMake 4.2.0, VS2026) | ✅ Done |
+| 11/28/2025 | CMake configuration & multiple build fixes | ✅ Done |
+| 11/28/2025 | First build (resolved API/VST2-VST3 issues) | ✅ Done |
+| 11/28/2025 | DAW testing & audio passthrough fix | ✅ Done |
+| 11/28/2025 | Phase 7: DSP infrastructure (Mode routing) | ✅ Done |
+| 11/28-29/2025 | Phase 8: Real filter coefficients | ✅ Done |
+
+---
+
+## 🚀 Next Steps - Phase 9: DAW Testing & Validation
+
+**Current Milestone**: All DSP implemented and compiling ✅
+
+**Remaining Work**:
+1. **Load plugin in Reaper** - Verify VST3 loads and initializes
+2. **Test Telephone mode** - Verify narrowband effect on speech
+3. **Test Radio mode** - Verify brightness enhancement
+4. **Test Custom mode** - Verify chained filter effect
+5. **Real-time switching** - No clicks/pops between modes
+6. **CPU profiling** - Verify <15% CPU target on test audio
+7. **Audio quality** - Listen for artifacts, noise floor, distortion
+8. **Release build** - Performance optimization (optional)
+
+---
+
+**Build Status**: ✅ **PHASE 8 COMPLETE - FILTERS REAL & COMPILED**  
+**Last Updated**: November 29, 2025  
+**Next Checkpoint**: Phase 9 DAW testing & validation
+
+
+
 
