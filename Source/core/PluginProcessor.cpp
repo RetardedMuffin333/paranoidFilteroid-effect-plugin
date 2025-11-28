@@ -1,5 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "../dsp/DSPChain.h"
 
 //==============================================================================
 juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParameterLayout() {
@@ -31,6 +32,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParam
 //==============================================================================
 PluginProcessor::PluginProcessor()
     : AudioProcessor(BusesProperties()
+                     .withInput("Input", juce::AudioChannelSet::stereo(), true)
                      .withOutput("Output", juce::AudioChannelSet::stereo(), true))
     , apvts(*this, nullptr, "STATE", createParameterLayout())
 {
@@ -46,11 +48,17 @@ void PluginProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
 
     juce::ScopedNoDenormals noDenormals;
 
-    // Initialize any DSP state here (none yet for pass-through)
+    // Prepare DSP chain with audio specification
+    juce::dsp::ProcessSpec spec;
+    spec.sampleRate = sampleRate;
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.numChannels = getMainBusNumOutputChannels();
+    dspChain.prepare(spec);
 }
 
 void PluginProcessor::releaseResources() {
-    // Clean up any allocated resources
+    // Reset DSP chain state
+    dspChain.reset();
 }
 
 //==============================================================================
@@ -60,30 +68,17 @@ void PluginProcessor::processBlock(juce::AudioBuffer<float>& buffer,
 
     // Read parameters
     bool enabled = apvts.getRawParameterValue("enabled")->load();
+    int mode = static_cast<int>(apvts.getRawParameterValue("mode")->load());
     float mix = apvts.getRawParameterValue("mix")->load();
 
+    // If disabled, clear output (bypass)
     if (!enabled) {
         buffer.clear();
         return;
     }
 
-    // Pass-through processing (no DSP yet)
-    // For now, just pass audio unchanged
-    // (DSP modules will be added here in Phase 3)
-
-    int numSamples = buffer.getNumSamples();
-    int numChannels = buffer.getNumChannels();
-
-    for (int ch = 0; ch < numChannels; ++ch) {
-        auto* channelData = buffer.getWritePointer(ch);
-
-        for (int n = 0; n < numSamples; ++n) {
-            // Output = input (100% dry for now)
-            // When DSP is added, this becomes: output = mix*wet + (1-mix)*dry
-        }
-    }
-
-    // For now, just ensure audio passes through (no processing)
+    // Process audio through DSP chain with selected mode and mix level
+    dspChain.processBlock(buffer, mode, mix);
 }
 
 //==============================================================================

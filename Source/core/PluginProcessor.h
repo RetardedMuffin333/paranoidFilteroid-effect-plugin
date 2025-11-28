@@ -1,6 +1,7 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
+#include "../dsp/DSPChain.h"
 
 //==============================================================================
 class PluginProcessor : public juce::AudioProcessor {
@@ -46,6 +47,9 @@ private:
 
     double currentSampleRate = 44100.0;
     int maxBlockSize = 512;
+
+    // DSP Chain for audio processing
+    DSPChain dspChain;
 
     //==========================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginProcessor)

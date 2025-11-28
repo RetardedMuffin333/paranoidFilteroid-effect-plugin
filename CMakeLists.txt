@@ -47,6 +47,9 @@ juce_add_plugin(paranoidFilteroid
 target_sources(paranoidFilteroid PRIVATE
     Source/core/PluginProcessor.cpp
     Source/core/PluginEditor.cpp
+    Source/dsp/TelephonyFilter.h
+    Source/dsp/RadioFilter.h
+    Source/dsp/DSPChain.h
 )
 
 # Include directories
@@ -70,7 +73,7 @@ target_compile_definitions(paranoidFilteroid PRIVATE
 
 # Set compiler flags
 if(MSVC)
-    target_compile_options(paranoidFilteroid PRIVATE /W4)
+    target_compile_options(paranoidFilteroid PRIVATE /W4 /FS)  # /FS enables parallel PDB writes
 else()
     target_compile_options(paranoidFilteroid PRIVATE -Wall -Wextra)
 endif()
