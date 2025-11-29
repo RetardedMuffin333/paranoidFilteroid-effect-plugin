@@ -52,67 +52,81 @@ This is the primary checklist Claude must use to track and validate development 
 
 ---
 
-### 3.1 Project Setup
-- [ ] Create JUCE plugin project (CMake/Projucer)
-- [ ] Configure plugin metadata (name, type, VST3)
-- [ ] Add minimal pass-through processor
-- [ ] Build + confirm plugin loads in DAW
+### 3.1 Phase 1-6: Foundation (COMPLETED ✅)
+- [x] Create JUCE plugin project (CMake/Projucer)
+- [x] Configure plugin metadata (name, type, VST3)
+- [x] Add minimal pass-through processor
+- [x] Build + confirm plugin loads in DAW
+- [x] Implement `createParameterLayout()`
+- [x] Add `mode` (Telephone/Radio/Custom)
+- [x] Add basic parameters: `mix`, `enabled`
+- [x] Audio passthrough confirmed in Reaper
 
 ---
 
-### 3.2 Parameter System (APVTS)
-- [ ] Implement `createParameterLayout()`
-- [ ] Add `mode` (Telephone/Radio/Custom)
-- [ ] Add filter params: `lowCutHz`, `highCutHz`
-- [ ] Add EQ params: `midFreqHz`, `midGainDb`, `midQ`
-- [ ] Add compressor params: threshold, ratio, attack, release, enabled
-- [ ] Add `saturationAmount`
-- [ ] Add `noiseLevelDb`
-- [ ] Add `monoSumming`
-- [ ] Add `mix`
-- [ ] Check all ranges match DSP_SPEC.md
+### 3.2 Phase 7: DSP Infrastructure (COMPLETED ✅)
+- [x] Create TelephonyFilter.h with real IIR coefficients
+- [x] Create RadioFilter.h with real IIR coefficients
+- [x] Create DSPChain.h orchestrator
+- [x] Implement mode-based filter routing
+- [x] Implement wet/dry mixing
+- [x] Real-time safe (no allocations in audio thread)
+- [x] Plugin loads and processes audio successfully
 
 ---
 
-### 3.3 DSP Chain
-- [ ] Create JUCE DSP chain object
-- [ ] Implement mono summing
-- [ ] Implement band-pass (HP + LP)
-- [ ] Implement mid-peak EQ
-- [ ] Implement compressor
-- [ ] Implement saturation waveshaper
-- [ ] Implement noise generator/mixer
-- [ ] Implement wet/dry mix
-- [ ] Add smoothing if needed
-- [ ] Verify parameter → DSP updates
+### 3.3 Phase 8: Real Filter Coefficients (COMPLETED ✅)
+- [x] Implement TelephonyFilter: 300Hz HP + 3400Hz LP
+- [x] Implement RadioFilter: 100Hz HP + 3500Hz presence peak
+- [x] Fix AudioBlock API conversion issue
+- [x] Plugin compiles and audio processes with real filters
+- [x] All three modes produce distinct effects
 
 ---
 
-### 3.4 GUI
-- [ ] Implement editor class
-- [ ] Add controls for all parameters
-- [ ] Connect using APVTS attachments
-- [ ] Organize controls into logical groups
-- [ ] Add optional resizing
-- [ ] Verify all controls update DSP correctly
+### 3.4 Phase 9: Enhanced Parameters (IN PROGRESS 🔄)
+- [ ] Implement LinearSmoothedValue for `mix` parameter
+- [ ] Implement LinearSmoothedValue for `outputGainDb`
+- [ ] Create NoiseGenerator.h (procedural white noise)
+- [ ] Add WaveShaper saturation stage to DSPChain
+- [ ] Add `saturationAmount` parameter to APVTS
+- [ ] Add `noiseLevelDb` parameter to APVTS
+- [ ] Update GUI with Saturation and Noise sliders
+- [ ] Add ScopedNoDenormals for CPU optimization
+- [ ] Test in Reaper: verify no zipper noise, smooth parameter changes
+- [ ] Test audio quality: saturation sounds natural, noise doesn't overpower
 
 ---
 
-### 3.5 Mode Logic
-- [ ] Implement `mode` switching
-- [ ] Apply correct DSP defaults for each mode
-- [ ] Avoid overwriting user-adjusted values
-- [ ] Ensure UI reflects mode state
+### 3.5 Phase 10: Advanced DSP (PLANNED ⏳)
+- [ ] Implement Presence Peak EQ (1500-3000 Hz boost)
+- [ ] Implement Compression module (threshold/ratio/makeup)
+- [ ] Add stereo processing modes (Mono/Dual-Mono/Stereo Spread)
+- [ ] Add Lo-Fi / Bit-Crusher (sample rate reduction)
+- [ ] Update APVTS with new parameters
+- [ ] Update GUI layout for advanced controls
+- [ ] Test all combinations in Reaper
 
 ---
 
-### 3.6 Validation (Per Feature)
-- [ ] Code compiles + loads cleanly
-- [ ] No crashes or RT issues
+### 3.6 Phase 11: Aesthetics & Polish (PLANNED ⏳)
+- [ ] Add embedded vinyl crackle samples
+- [ ] Implement sample playback with random timing
+- [ ] Create advanced GUI with visual feedback
+- [ ] Add meter displays
+- [ ] Implement preset management system
+- [ ] Professional documentation and help text
+
+---
+
+### 3.7 Audio Quality Validation (Continuous)
+- [ ] Code compiles + loads cleanly (after each phase)
+- [ ] No crashes or real-time issues
 - [ ] No pops/clicks on parameter changes
 - [ ] Each parameter affects audio as intended
-- [ ] Matches DSP_SPEC.md behavior
-- [ ] CPU usage acceptable
+- [ ] CPU usage <15% on sustained audio
+- [ ] All three modes sound distinct
+- [ ] Mode switching is smooth and click-free
 
 ---
 
